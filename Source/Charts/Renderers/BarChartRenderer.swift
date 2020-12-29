@@ -427,11 +427,26 @@ open class BarChartRenderer: BarLineScatterCandleBubbleRenderer
             
             if !isSingleColor
             {
-                // Set the color for the currently drawn value. If the index is out of bounds, reuse colors.
-                context.setFillColor(dataSet.color(atIndex: j).cgColor)
+                let fillColors = [UIColor(red: 1, green: 0.741, blue: 0.349, alpha: 1).cgColor,UIColor(red: 0.172, green: 0.858, blue: 0.652, alpha: 0.8).cgColor,UIColor(red: 0.172, green: 0.858, blue: 0.652, alpha: 0).cgColor]
+                let locations:[CGFloat] =  [0.13,0.66, 1] as [CGFloat]
+                context.saveGState()
+                context.clip(to: barRect)
+                let gradient:CGGradient
+                let colorspace:CGColorSpace
+                colorspace = CGColorSpaceCreateDeviceRGB()
+                
+                gradient = CGGradient(colorsSpace: colorspace, colors: fillColors as CFArray, locations: locations)!
+                
+                //Vertical Gradient
+                let startPoint:CGPoint = CGPoint(x: 0.0, y: viewPortHandler.contentBottom)
+                let endPoint:CGPoint = CGPoint(x: 0.0, y: viewPortHandler.contentTop)
+                
+                context.drawLinearGradient(gradient, start: startPoint, end: endPoint, options: .init(rawValue: 0))
+                context.restoreGState()
+            } else {
+                context.fill(barRect)
+
             }
-            
-            context.fill(barRect)
             
             if drawBorder
             {
